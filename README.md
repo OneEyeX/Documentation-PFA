@@ -1368,4 +1368,164 @@ Content-Type: application/json
 - Le token Bearer est obligatoire pour effectuer cette action.
 
 ---
- 
+
+# 📄 Documentation de l'API : Récupérer les colocations non publiées
+
+## 🔍 Vue d'ensemble
+
+- **URL de base** : `http://localhost:8081/api/colocations/non-published`
+- **Méthode** : `GET`
+- **Authentification requise** : ✅ Oui (Bearer Token)
+- **Code succès** : `200 OK`
+- **Code erreur** :
+  - `401 Unauthorized` : si le token est manquant ou invalide
+  - `403 Forbidden` : si l’utilisateur n’a pas les droits nécessaires
+
+---
+
+## 📥 Paramètres de requête (optionnels)
+
+| Paramètre | Description |
+|----------|-------------|
+| `page`   | Numéro de la page à récupérer (commence à 1) |
+| `size`   | Nombre d’éléments par page |
+| `search` | Terme de recherche optionnel (par exemple : ville, adresse, etc.) |
+
+> Exemple :
+```bash
+GET /api/colocations/non-published?page=1&size=1&search=sss
+```
+
+---
+
+## 🔐 Authentification
+
+Cette API nécessite un **token Bearer** valide dans l'en-tête de la requête.
+
+### Exemple d’en-tête :
+```http
+Authorization: Bearer <votre_token>
+```
+
+En cas d'absence ou d'invalidité du token, l'API renverra :
+```http
+HTTP/1.1 401 Unauthorized
+```
+
+Si l'utilisateur connecté n'a pas les permissions nécessaires :
+```http
+HTTP/1.1 403 Forbidden
+```
+
+---
+
+## 📤 Format de la réponse (succès - 200 OK)
+
+La réponse est un objet JSON contenant une liste paginée de colocations non publiées.
+
+### Exemple de réponse :
+
+```json
+{
+    "content": [
+        {
+            "id": 1,
+            "name": "Colocation El Manar",
+            "idOfPublisher": "1",
+            "nameOfPublisher": "Chedly",
+            "address": "Rue des étudiants, Tunis",
+            "city": "Tunis",
+            "postalCode": "1002",
+            "description": "Proche de la faculté",
+            "price": 350.0,
+            "numberOfRooms": 3,
+            "roommatesGenderPreference": null,
+            "hasWifi": null,
+            "hasParking": null,
+            "hasAirConditioning": null,
+            "isFurnished": null,
+            "hasBalcony": null,
+            "hasPrivateBathroom": null,
+            "maxRoommates": null,
+            "currentRoommates": null,
+            "status": null,
+            "rules": [],
+            "tags": [],
+            "imageUrls": [],
+            "averageRating": 0.0,
+            "reviews": [],
+            "availableFrom": null,
+            "createdAt": "2025-05-12",
+            "updatedAt": "2025-05-12",
+            "isArchived": false,
+            "isPublished": false
+        }
+    ],
+    "pageable": {
+        "pageNumber": 0,
+        "pageSize": 10,
+        "sort": { "empty": true, "sorted": false, "unsorted": true },
+        "offset": 0,
+        "paged": true,
+        "unpaged": false
+    },
+    "last": true,
+    "totalPages": 1,
+    "totalElements": 5,
+    "first": true,
+    "numberOfElements": 5,
+    "size": 10,
+    "number": 0,
+    "sort": { "empty": true, "sorted": false, "unsorted": true },
+    "empty": false
+}
+```
+
+---
+
+## 📌 Réponse vide (aucune colocation trouvée)
+
+```json
+{
+    "content": [],
+    "pageable": {
+        "pageNumber": 1,
+        "pageSize": 1,
+        "sort": { "empty": true, "sorted": false, "unsorted": true },
+        "offset": 1,
+        "paged": true,
+        "unpaged": false
+    },
+    "last": true,
+    "totalPages": 0,
+    "totalElements": 0,
+    "first": false,
+    "numberOfElements": 0,
+    "size": 1,
+    "number": 1,
+    "sort": { "empty": true, "sorted": false, "unsorted": true },
+    "empty": true
+}
+```
+
+---
+
+## ✅ Exemple complet de requête
+
+### Récupérer les colocations non publiées avec filtre :
+```bash
+GET http://localhost:8081/api/colocations/non-published?page=1&size=1&search=sss
+Authorization: Bearer <votre_token>
+```
+
+---
+
+## 🧪 Notes importantes
+
+- Les champs comme `hasWifi`, `isFurnished`, etc., peuvent être `true`, `false` ou `null`.
+- Les dates (`createdAt`, `updatedAt`, `availableFrom`) sont au format **`YYYY-MM-DD`**.
+- La pagination commence à la page 0 côté serveur (`pageNumber`) mais peut être demandée à partir de la page 1 côté client (`page=1`).
+- Si `empty` vaut `true`, cela signifie qu’il n’y a pas de données disponibles pour cette page.
+- Le token Bearer est obligatoire pour effectuer cette action.
+
+---
