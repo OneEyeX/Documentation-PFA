@@ -1910,3 +1910,208 @@ Cette requête **ne nécessite pas d’authentification**.
 
 ---
  
+
+# 🖼️ Ajouter une image à une colocation
+
+Ajoute une nouvelle image à une colocation identifiée par son ID.
+Requête sécurisée, nécessite un token JWT valide.
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `http://localhost:8081/api/colocations/{colocationId}/images`
+* **Method** : `POST`
+* **Auth Required** : ✅ Oui (Bearer Token)
+
+---
+
+## 📥 Path Parameters
+
+| Paramètre      | Type | Description                  |
+| -------------- | ---- | ---------------------------- |
+| `colocationId` | int  | Identifiant de la colocation |
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## 📥 Request Body
+
+```json
+{
+  "url": "https://example.com/images/colocation1.jpg"
+}
+```
+
+| Champ | Type   | Description              |
+| ----- | ------ | ------------------------ |
+| url   | string | URL de l’image à ajouter |
+
+---
+
+## ✅ Réponse : 201 Created
+
+```json
+{
+  "id": null,
+  "url": "https://example.com/images/colocation1.jpg"
+}
+```
+
+| Champ | Type     | Description                                           |
+| ----- | -------- | ----------------------------------------------------- |
+| id    | int/null | Identifiant de l’image (peut être null si non généré) |
+| url   | string   | URL de l’image ajoutée                                |
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message               | Cause                              |
+| --------- | --------------------- | ---------------------------------- |
+| 400       | Bad Request           | Corps de la requête invalide       |
+| 401       | Unauthorized          | Token manquant, invalide ou expiré |
+| 403       | Forbidden             | Rôle non autorisé                  |
+| 404       | Not Found             | Colocation non trouvée             |
+| 500       | Internal Server Error | Erreur serveur inattendue          |
+
+---
+ 
+
+# 🖼️ Mettre à jour une image d’une colocation
+
+Modifie l’URL et la description d’une image spécifique attachée à une colocation.
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `http://localhost:8081/api/colocations/{colocationId}/images/{imageId}`
+* **Method** : `PUT`
+* **Auth Required** : ✅ Oui (Bearer Token)
+
+---
+
+## 📥 Path Parameters
+
+| Paramètre      | Type | Description                       |
+| -------------- | ---- | --------------------------------- |
+| `colocationId` | int  | Identifiant de la colocation      |
+| `imageId`      | int  | Identifiant de l’image à modifier |
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## 📥 Request Body
+
+```json
+{
+  "url": "https://nouvelle-url.com/image.jpg",
+  "description": "Nouvelle description de l'image"
+}
+```
+
+| Champ       | Type   | Description                      |
+| ----------- | ------ | -------------------------------- |
+| url         | string | Nouvelle URL de l’image          |
+| description | string | Nouvelle description optionnelle |
+
+---
+
+## ✅ Réponse : 200 OK
+
+```json
+{
+  "id": 8,
+  "url": "https://nouvelle-url.com/image.jpg"
+}
+```
+
+| Champ | Type   | Description                |
+| ----- | ------ | -------------------------- |
+| id    | int    | Identifiant de l’image     |
+| url   | string | URL mise à jour de l’image |
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message               | Cause                                                                                                                                    |
+| --------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 400       | Bad Request           | Corps de la requête invalide                                                                                                             |
+| 401       | Unauthorized          | Token manquant, invalide ou expiré                                                                                                       |
+| 403       | Forbidden             | Rôle non autorisé                                                                                                                        |
+| 404       | Not Found             | Colocation ou image non trouvée                                                                                                          |
+| 500       | Internal Server Error | Erreur serveur inattendue, par exemple :                                                                                                 |
+|           |                       | "Image does not belong to the specified colocation" — L’image que vous essayez de modifier n’est pas associée à la colocation spécifiée. |
+
+---
+ 
+
+# 🗑️ Supprimer une image d’une colocation
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `http://localhost:8081/api/colocations/{colocationId}/images/{imageId}`
+* **Method** : `DELETE`
+* **Auth Required** : Oui (Bearer Token)
+
+---
+
+## 📥 Paramètres d’URL
+
+| Paramètre      | Type | Description               |
+| -------------- | ---- | ------------------------- |
+| `colocationId` | int  | ID de la colocation       |
+| `imageId`      | int  | ID de l’image à supprimer |
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## ✅ Réponse en cas de succès
+
+* **Code** : 204 No Content
+* Pas de corps dans la réponse.
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message      | Cause possible                                                                          |
+| --------- | ------------ | --------------------------------------------------------------------------------------- |
+| 401       | Unauthorized | Token manquant, invalide ou expiré                                                      |
+| 403       | Forbidden    | Permissions insuffisantes                                                               |
+| 404       | Not Found    | Colocation ou image non trouvée, ou image ne fait pas partie de la colocation spécifiée |
+
+---
+
+## Notes / Conseils
+
+* Le code 404 peut arriver si tu tentes de supprimer une image qui n’existe pas ou qui n’appartient pas à la colocation indiquée.
+* Vérifie bien que l’`imageId` appartient bien à la `colocationId` avant la suppression.
+
+---
+ 
