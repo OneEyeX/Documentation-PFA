@@ -1762,3 +1762,83 @@ Exemple :
 | 500       | Internal Error | Erreur interne côté serveur        |
 
 ---
+
+# ✍️ Ajouter un avis sur une colocation
+
+Permet à un utilisateur connecté de laisser un avis (note + commentaire) sur une colocation spécifique.
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `http://localhost:8081/api/colocations/{colocationId}/reviews`
+* **Method** : `POST`
+* **Auth Required** : ✅ Oui (JWT Bearer Token)
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## 📥 Path Parameters
+
+| Paramètre      | Type | Description                    |
+| -------------- | ---- | ------------------------------ |
+| `colocationId` | int  | L'identifiant de la colocation |
+
+---
+
+## 📝 Body (JSON)
+
+```json
+{
+  "rating": 4,
+  "comment": "Clean and quiet apartment. Would definitely recommend!"
+}
+```
+
+| Champ     | Type   | Obligatoire | Description                       |
+| --------- | ------ | ----------- | --------------------------------- |
+| `rating`  | int    | ✅ Oui       | Note sur 5 donnée à la colocation |
+| `comment` | string | ✅ Oui       | Commentaire associé à la note     |
+
+---
+
+## ✅ Réponse : 200 OK
+
+```json
+{
+  "id": 1,
+  "reviewerId": "86c13de2-7fdb-4ee6-a547-e9266ad19b0a",
+  "reviewerName": "admin2",
+  "rating": 4,
+  "comment": "Clean and quiet apartment. Would definitely recommend!",
+  "createdAt": "2025-05-25"
+}
+```
+
+| Champ          | Type   | Description                          |
+| -------------- | ------ | ------------------------------------ |
+| `id`           | int    | Identifiant de la review             |
+| `reviewerId`   | string | UUID de l’utilisateur ayant commenté |
+| `reviewerName` | string | Nom de l’utilisateur ayant commenté  |
+| `rating`       | int    | Note attribuée                       |
+| `comment`      | string | Texte du commentaire                 |
+| `createdAt`    | string | Date de création de l’avis           |
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message      | Cause                                      |
+| --------- | ------------ | ------------------------------------------ |
+| 401       | Unauthorized | Token manquant, invalide ou expiré         |
+| 404       | Not Found    | La colocation avec l’ID donné n’existe pas |
+| 400       | Bad Request  | Le corps de la requête est invalide        |
+
+---
