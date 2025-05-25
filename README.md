@@ -1529,3 +1529,236 @@ Authorization: Bearer <votre_token>
 - Le token Bearer est obligatoire pour effectuer cette action.
 
 ---
+
+# 📘 Assigner un Utilisateur à une Colocation
+
+Assigne un utilisateur existant à une colocation spécifique, à condition qu’il soit autorisé (rôle : admin ou propriétaire).
+
+---
+
+## 🔗 Endpoint
+
+* **URL**: `http://localhost:8081/api/colocations/{{roomId}}/assign/{{userId}}`
+* **Method**: `PUT`
+* **Auth Required**: ✅ Oui (JWT Bearer Token)
+* **Roles éligibles**: `ADMIN`, `OWNER`
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+Exemple :
+
+```
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+---
+
+## 📥 Request Body
+
+Aucun corps requis pour cette requête.
+
+---
+
+## ✅ Réponse : 200 OK
+
+Renvoie les détails de la colocation après l’assignation réussie de l’utilisateur.
+
+```json
+{
+  "id": 9,
+  "name": "test",
+  "idOfPublisher": "86c13de2-7fdb-4ee6-a547-e9266ad19b0a",
+  "nameOfPublisher": "admin2",
+  "address": "Rue des étudiants, Tunis",
+  "city": "Tunis",
+  "postalCode": "1002",
+  "description": "Proche de la faculté",
+  "price": 350.0,
+  "availableFrom": "2025-06-01",
+  "numberOfRooms": 3,
+  "roommatesGenderPreference": "MIXED",
+  "hasWifi": true,
+  "hasParking": true,
+  "hasAirConditioning": false,
+  "isFurnished": true,
+  "hasBalcony": false,
+  "hasPrivateBathroom": true,
+  "maxRoommates": 4,
+  "currentRoommates": 1,
+  "status": "AVAILABLE",
+  "rules": [
+    "No smoking",
+    "No pets"
+  ],
+  "tags": [
+    "faculté",
+    "wifi",
+    "proche centre"
+  ],
+  "images": [],
+  "createdAt": "2025-05-25",
+  "updatedAt": "2025-05-25",
+  "reviews": [],
+  "isArchived": false,
+  "isPublished": false,
+  "averageRating": 0.0,
+  "assignedUserIds": [
+    "86c13de2-7fdb-4ee6-a547-e9266ad19b0a"
+  ]
+}
+```
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message                                        | Cause                                              |
+| --------- | ---------------------------------------------- | -------------------------------------------------- |
+| 400       | `User is already assigned to this colocation.` | L’utilisateur est déjà assigné à cette colocation. |
+| 401       | Unauthorized                                   | Token manquant, invalide ou expiré.                |
+| 403       | Forbidden                                      | Rôle insuffisant pour effectuer cette action.      |
+
+---
+ 
+
+# 📘 Mes Colocations API Endpoint
+
+Récupère les colocations créées (publiées ou non) par l'utilisateur actuellement authentifié.
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `http://localhost:8081/api/colocations/my-colocations`
+* **Method** : `GET`
+* **Auth Required** : ✅ Oui (JWT Bearer Token)
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+Exemple :
+
+```
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+---
+
+## 📥 Query Parameters
+
+| Paramètre | Type   | Description                           |
+| --------- | ------ | ------------------------------------- |
+| `page`    | int    | Numéro de page (commence à 1)         |
+| `size`    | int    | Nombre d’éléments par page            |
+| `search`  | string | Filtre par mot-clé sur le nom/adresse |
+
+Exemple :
+`?page=1&size=1&search=sss`
+
+---
+
+## ✅ Réponse : 200 OK
+
+```json
+{
+  "content": [
+    {
+      "id": 4,
+      "name": "admin",
+      "idOfPublisher": "86c13de2-7fdb-4ee6-a547-e9266ad19b0a",
+      "nameOfPublisher": "admin2",
+      "address": "aa",
+      "city": "za",
+      "postalCode": "azza",
+      "description": "xccx",
+      "price": 52.0,
+      "availableFrom": "2025-05-14",
+      "numberOfRooms": 1,
+      "roommatesGenderPreference": "MALE",
+      "hasWifi": true,
+      "hasParking": null,
+      "hasAirConditioning": true,
+      "isFurnished": null,
+      "hasBalcony": null,
+      "hasPrivateBathroom": true,
+      "maxRoommates": 3,
+      "currentRoommates": 2,
+      "status": "yes",
+      "rules": ["no", "no"],
+      "tags": ["yes", ""],
+      "images": [
+        {
+          "id": 2,
+          "url": "image"
+        }
+      ],
+      "createdAt": "2025-05-12",
+      "updatedAt": "2025-05-12",
+      "reviews": [],
+      "isArchived": false,
+      "isPublished": false,
+      "averageRating": 0.0,
+      "assignedUserIds": []
+    }
+  ],
+  "pageable": {
+    "pageNumber": 0,
+    "pageSize": 10,
+    "offset": 0,
+    "paged": true,
+    "unpaged": false,
+    "sort": {
+      "sorted": false,
+      "unsorted": true,
+      "empty": true
+    }
+  },
+  "last": true,
+  "totalPages": 1,
+  "totalElements": 2,
+  "size": 10,
+  "number": 0,
+  "sort": {
+    "sorted": false,
+    "unsorted": true,
+    "empty": true
+  },
+  "numberOfElements": 2,
+  "first": true,
+  "empty": false
+}
+```
+
+| Champ         | Type    | Description                          |
+| ------------- | ------- | ------------------------------------ |
+| content       | array   | Liste paginée des colocations créées |
+| pageable      | object  | Métadonnées de la pagination         |
+| totalPages    | int     | Nombre total de pages                |
+| totalElements | int     | Nombre total de colocations          |
+| size          | int     | Taille de la page                    |
+| number        | int     | Numéro de la page actuelle           |
+| first         | boolean | Est-ce la première page ?            |
+| last          | boolean | Est-ce la dernière page ?            |
+| empty         | boolean | La liste est-elle vide ?             |
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message        | Cause                              |
+| --------- | -------------- | ---------------------------------- |
+| 401       | Unauthorized   | Token manquant, invalide ou expiré |
+| 500       | Internal Error | Erreur interne côté serveur        |
+
+---
