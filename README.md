@@ -1842,3 +1842,71 @@ Permet à un utilisateur connecté de laisser un avis (note + commentaire) sur u
 | 400       | Bad Request  | Le corps de la requête est invalide        |
 
 ---
+ 
+
+# 📋 Récupérer les avis d’une colocation
+
+Récupère la liste des avis laissés par les utilisateurs pour une colocation donnée.
+Cette requête **ne nécessite pas d’authentification**.
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `http://localhost:8081/api/colocations/{colocationId}/reviews`
+* **Method** : `GET`
+* **Auth Required** : ❌ Non
+
+---
+
+## 📥 Path Parameters
+
+| Paramètre      | Type | Description                  |
+| -------------- | ---- | ---------------------------- |
+| `colocationId` | int  | Identifiant de la colocation |
+
+---
+
+## ✅ Réponse : 200 OK
+
+```json
+[
+    {
+        "id": 1,
+        "reviewerId": "86c13de2-7fdb-4ee6-a547-e9266ad19b0a",
+        "reviewerName": "admin2",
+        "rating": 4,
+        "comment": "Clean and quiet apartment. Would definitely recommend!",
+        "createdAt": "2025-05-25"
+    },
+    {
+        "id": 2,
+        "reviewerId": "86c13de2-7fdb-4ee6-a547-e9266ad19b0a",
+        "reviewerName": "admin2",
+        "rating": 4,
+        "comment": "Clean and quiet apartment. Would definitely recommend!",
+        "createdAt": "2025-05-25"
+    }
+]
+```
+
+| Champ          | Type   | Description                          |
+| -------------- | ------ | ------------------------------------ |
+| `id`           | int    | Identifiant de l’avis                |
+| `reviewerId`   | string | UUID de l’utilisateur ayant commenté |
+| `reviewerName` | string | Nom de l’utilisateur ayant commenté  |
+| `rating`       | int    | Note attribuée                       |
+| `comment`      | string | Texte du commentaire                 |
+| `createdAt`    | string | Date de création de l’avis           |
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message        | Cause                     |
+| --------- | -------------- | ------------------------- |
+| 404       | Not Found      | Colocation introuvable    |
+| 500       | Internal Error | Erreur serveur inattendue |
+
+---
+ 
