@@ -2115,3 +2115,136 @@ Modifie l’URL et la description d’une image spécifique attachée à une col
 
 ---
  
+
+# 📋 Liste des rôles disponibles
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `GET http://localhost:8081/api/auth/roles`
+* **Méthode** : `GET`
+* **Authentification** : Oui (Bearer Token requis)
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## ✅ Réponse (200 OK)
+
+Un tableau JSON listant les rôles existants avec leurs propriétés :
+
+Exemple :
+
+```json
+[
+  {
+    "id": "c7623844-272a-4f27-b450-3ce013c1e7b2",
+    "name": "admin",
+    "description": "",
+    "composite": true,
+    "clientRole": true,
+    "containerId": "71919931-d9ee-4522-b316-f8152da7785b"
+  },
+  {
+    "id": "016941fc-422b-4ba1-b346-df667efb0673",
+    "name": "user",
+    "description": "",
+    "composite": true,
+    "clientRole": true,
+    "containerId": "71919931-d9ee-4522-b316-f8152da7785b"
+  },
+  {
+    "id": "6bea7bec-4eb3-4967-b827-8abbc4c49264",
+    "name": "colocataire",
+    "description": "",
+    "composite": true,
+    "clientRole": true,
+    "containerId": "71919931-d9ee-4522-b316-f8152da7785b"
+  }
+]
+```
+
+---
+
+## ⚙️ Explications des champs
+
+| Champ         | Type    | Description                                                  |
+| ------------- | ------- | ------------------------------------------------------------ |
+| `id`          | string  | Identifiant unique du rôle                                   |
+| `name`        | string  | Nom du rôle (ex : admin, user, colocataire)                  |
+| `description` | string  | Description textuelle du rôle (vide ici)                     |
+| `composite`   | boolean | Indique si le rôle est composite (regroupant d’autres rôles) |
+| `clientRole`  | boolean | Indique si c’est un rôle côté client                         |
+| `containerId` | string  | Identifiant du conteneur ou realm associé                    |
+
+---
+ 
+# ⚙️ Assigner des rôles à un utilisateur
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `POST http://localhost:8081/api/auth/users/{userId}/roles`
+* **Méthode** : `POST`
+* **Authentification** : Oui (Bearer Token avec rôle admin requis)
+
+---
+
+## 📥 Paramètres d’URL
+
+| Paramètre | Type   | Description                         |
+| --------- | ------ | ----------------------------------- |
+| `userId`  | string | Identifiant unique de l’utilisateur |
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## 📦 Corps de la requête
+
+Un tableau JSON de chaînes, contenant les rôles à attribuer à l’utilisateur.
+
+Exemple :
+
+```json
+[
+  "admin",
+  "colocataire",
+  "user"
+]
+```
+
+---
+
+## ✅ Réponse en cas de succès
+
+* **Code** : 204 No Content
+* Pas de contenu dans la réponse.
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message      | Cause possible                               |
+| --------- | ------------ | -------------------------------------------- |
+| 401       | Unauthorized | Token manquant, invalide ou expiré           |
+| 403       | Forbidden    | Utilisateur sans rôle admin                  |
+| 404       | Not Found    | Utilisateur non trouvé                       |
+| 400       | Bad Request  | Rôles invalides ou format incorrect du corps |
+
+---
+ 
