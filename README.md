@@ -2247,4 +2247,650 @@ Exemple :
 | 400       | Bad Request  | Rôles invalides ou format incorrect du corps |
 
 ---
+
+# ➕ Ajouter une dépense
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `POST http://localhost:8081/api/expenses`
+* **Méthode** : `POST`
+* **Authentification** : Oui (Bearer Token requis)
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## 📦 Corps de la requête
+
+Un objet JSON représentant la dépense à créer, incluant le libellé, le montant total, la date limite de paiement, l’auteur du paiement, l'identifiant de la colocation, et la répartition (`shares`) entre les utilisateurs concernés.
+
+Exemple :
+
+```json
+{
+  "label": "Dhaw",
+  "totalAmount": 100,
+  "dateLimit": "2025-05-30",
+  "paidByUserId": "user1",
+  "paidByUserEmail": "user1@test.com",
+  "colocationId": 1,
+  "shares": [
+    {
+      "userId": "chedly",
+      "userEmail": "chedly@email.com",
+      "amount": 400
+    },
+    {
+      "userId": "user2",
+      "userEmail": "user2@test.com",
+      "amount": 60,
+      "paid": false
+    }
+  ]
+}
+```
+
+---
+
+## ✅ Réponse en cas de succès
+
+* **Code** : `201 Created`
+* **Contenu** : Objet JSON représentant la dépense créée.
+
+Exemple :
+
+```json
+{
+  "id": 11,
+  "label": "Dhaw",
+  "totalAmount": 100.0,
+  "dateLimit": "2025-05-30",
+  "paidByUserId": "user1",
+  "paidByUserEmail": "user1@test.com",
+  "colocationId": 1,
+  "shares": [
+    {
+      "userId": "chedly",
+      "userEmail": "chedly@email.com",
+      "amount": 400.0,
+      "paid": false,
+      "datePaid": null
+    },
+    {
+      "userId": "user2",
+      "userEmail": "user2@test.com",
+      "amount": 60.0,
+      "paid": false,
+      "datePaid": null
+    }
+  ],
+  "datePaid": null
+}
+```
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message        | Cause possible                                   |
+| --------- | -------------- | ------------------------------------------------ |
+| 400       | Bad Request    | Données manquantes ou format incorrect           |
+| 401       | Unauthorized   | Token manquant, invalide ou expiré               |
+| 403       | Forbidden      | Accès non autorisé                               |
+| 404       | Not Found      | Utilisateur ou colocation introuvable            |
+| 500       | Internal Error | Erreur interne lors de la création de la dépense |
+
+---
+
+# 💰 Mettre à jour une dépense
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `PUT http://localhost:8081/api/expenses/{expenseId}`
+* **Méthode** : `PUT`
+* **Authentification** : Oui (Bearer Token requis)
+
+---
+
+## 📥 Paramètres d’URL
+
+| Paramètre   | Type   | Description                                      |
+| ----------- | ------ | ------------------------------------------------ |
+| `expenseId` | number | Identifiant unique de la dépense à mettre à jour |
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## 📦 Corps de la requête
+
+Un objet JSON décrivant les informations mises à jour de la dépense, y compris le label, le montant total, l'utilisateur ayant payé, l'identifiant de la colocation, et les parts des utilisateurs.
+
+Exemple :
+
+```json
+{
+  "label": "Groceries updated",
+  "totalAmount": 100,
+  "date": "2025-05-28",
+  "paidByUserId": "user1",
+  "paidByUserEmail": "user2@test.com",
+  "colocationId": 1,
+  "shares": [
+    {
+      "userId": "user1",
+      "userEmail": "user2@test.com",
+      "amount": 50,
+      "paid": true
+    },
+    {
+      "userId": "user2",
+      "userEmail": "user2@test.com",
+      "amount": 50,
+      "paid": true
+    }
+  ]
+}
+```
+
+---
+
+## ✅ Réponse en cas de succès
+
+* **Code** : `200 OK`
+* **Contenu** : Objet JSON représentant la dépense mise à jour.
+
+Exemple :
+
+```json
+{
+  "id": 1,
+  "label": "Groceries updated",
+  "totalAmount": 100.0,
+  "dateLimit": null,
+  "paidByUserId": "user1",
+  "paidByUserEmail": "user2@test.com",
+  "colocationId": 1,
+  "shares": [
+    {
+      "userId": "user1",
+      "userEmail": "user2@test.com",
+      "amount": 50.0,
+      "paid": true,
+      "datePaid": "2025-05-29"
+    },
+    {
+      "userId": "user2",
+      "userEmail": "user2@test.com",
+      "amount": 50.0,
+      "paid": true,
+      "datePaid": "2025-05-29"
+    }
+  ],
+  "datePaid": "2025-05-29"
+}
+```
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message        | Cause possible                                |
+| --------- | -------------- | --------------------------------------------- |
+| 400       | Bad Request    | Données invalides dans le corps de la requête |
+| 401       | Unauthorized   | Token manquant, invalide ou expiré            |
+| 403       | Forbidden      | Accès non autorisé à cette ressource          |
+| 404       | Not Found      | Dépense avec l’ID spécifié introuvable        |
+| 500       | Internal Error | Erreur interne du serveur                     |
+
+---
+
+# 📥 Obtenir les dépenses d’un utilisateur (filtrées par paiement)
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `GET http://localhost:8081/api/expenses/user/{userId}`
+* **Méthode** : `GET`
+* **Authentification** : Oui (Bearer Token requis)
+
+---
+
+## 📥 Paramètres d’URL
+
+| Paramètre | Type   | Description                         |
+| --------- | ------ | ----------------------------------- |
+| `userId`  | string | Identifiant unique de l’utilisateur |
+
+---
+
+## 🔎 Paramètres de requête
+
+| Clé    | Type    | Obligatoire | Description                                                |
+| ------ | ------- | ----------- | ---------------------------------------------------------- |
+| `paid` | boolean | Oui         | `true` pour les dépenses payées, `false` pour les impayées |
+
+Exemple d’appel :
+
+```
+GET http://localhost:8081/api/expenses/user/chedly?paid=false
+```
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## ✅ Réponse en cas de succès
+
+* **Code** : `200 OK`
+* **Contenu** : Un objet JSON contenant :
+
+  * un tableau `expenses` avec les dépenses correspondantes
+  * un champ `totalUnpaidAmount` (si `paid=false`)
+
+Exemple :
+
+```json
+{
+  "expenses": [
+    {
+      "id": 9,
+      "label": "Dhaw",
+      "totalAmount": 100.0,
+      "dateLimit": "2025-06-01",
+      "paidByUserId": "user1",
+      "paidByUserEmail": "user1@test.com",
+      "colocationId": 1,
+      "shares": [
+        {
+          "userId": "chedly",
+          "userEmail": "chedly@email.com",
+          "amount": 40.0,
+          "paid": false,
+          "datePaid": null
+        },
+        ...
+      ],
+      "datePaid": null
+    },
+    ...
+  ],
+  "totalUnpaidAmount": 840.0
+}
+```
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message      | Cause possible                        |
+| --------- | ------------ | ------------------------------------- |
+| 400       | Bad Request  | Valeur du paramètre `paid` incorrecte |
+| 401       | Unauthorized | Token manquant, invalide ou expiré    |
+| 403       | Forbidden    | Accès non autorisé à ces données      |
+| 404       | Not Found    | Utilisateur introuvable               |
+
+---
  
+
+# 📥 Obtenir les dépenses par email utilisateur
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `GET http://localhost:8081/api/expenses/byUserEmail`
+* **Méthode** : `GET`
+* **Authentification** : Oui (Bearer Token requis)
+
+---
+
+## 🔎 Paramètres de requête
+
+| Paramètre   | Type   | Obligatoire | Description                             |
+| ----------- | ------ | ----------- | --------------------------------------- |
+| `userEmail` | string | ✅ Oui       | Adresse email de l’utilisateur concerné |
+
+Exemple d’appel :
+
+```
+GET http://localhost:8081/api/expenses/byUserEmail?userEmail=chedly@email.com
+```
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## ✅ Réponse en cas de succès
+
+* **Code** : `200 OK`
+* **Contenu** : Un tableau JSON contenant les dépenses associées à l'email de l’utilisateur.
+
+Exemple :
+
+```json
+[
+  {
+    "id": 9,
+    "label": "Dhaw",
+    "totalAmount": 100.0,
+    "dateLimit": "2025-06-01",
+    "datePaid": null,
+    "paidByUserEmail": "user1@test.com",
+    "colocationId": 1,
+    "totalPaidShares": 0.0,
+    "totalUnpaidShares": 100.0
+  },
+  {
+    "id": 10,
+    "label": "Dhaw",
+    "totalAmount": 100.0,
+    "dateLimit": "2025-05-30",
+    "datePaid": null,
+    "paidByUserEmail": "user1@test.com",
+    "colocationId": 1,
+    "totalPaidShares": 0.0,
+    "totalUnpaidShares": 460.0
+  },
+  {
+    "id": 11,
+    "label": "Dhaw",
+    "totalAmount": 100.0,
+    "dateLimit": "2025-05-30",
+    "datePaid": null,
+    "paidByUserEmail": "user1@test.com",
+    "colocationId": 1,
+    "totalPaidShares": 50.0,
+    "totalUnpaidShares": 450.0
+  }
+]
+```
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message      | Cause possible                                    |
+| --------- | ------------ | ------------------------------------------------- |
+| 400       | Bad Request  | Paramètre `userEmail` manquant ou invalide        |
+| 401       | Unauthorized | Token absent, invalide ou expiré                  |
+| 403       | Forbidden    | Utilisateur non autorisé à consulter ces dépenses |
+| 404       | Not Found    | Aucune dépense trouvée pour cet email             |
+
+---
+ 
+
+# 📊 Obtenir les statistiques de dépenses d’un utilisateur
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `GET http://localhost:8081/api/expenses/stats`
+* **Méthode** : `GET`
+* **Authentification** : Oui (Bearer Token requis)
+
+---
+
+## 🔎 Paramètres de requête
+
+| Paramètre   | Type   | Obligatoire | Description                                          |
+| ----------- | ------ | ----------- | ---------------------------------------------------- |
+| `userEmail` | string | ✅ Oui       | Email de l’utilisateur pour obtenir ses statistiques |
+
+Exemple d’appel :
+
+```
+GET http://localhost:8081/api/expenses/stats?userEmail=chedly@email.com
+```
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## ✅ Réponse en cas de succès
+
+* **Code** : `200 OK`
+* **Contenu** : Un tableau JSON contenant les statistiques par colocation.
+
+Exemple :
+
+```json
+[
+  {
+    "colocationId": 1,
+    "totalSpent": 0.0,
+    "totalOwed": 840.0,
+    "typeWiseAmount": null
+  }
+]
+```
+
+### 📘 Description des champs
+
+| Champ            | Type          | Description                                                   |
+| ---------------- | ------------- | ------------------------------------------------------------- |
+| `colocationId`   | integer       | Identifiant de la colocation concernée                        |
+| `totalSpent`     | float         | Montant total dépensé par l’utilisateur pour cette colocation |
+| `totalOwed`      | float         | Montant total que l’utilisateur doit (non payé)               |
+| `typeWiseAmount` | object / null | Détail des montants par type de dépense, si disponible        |
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message      | Cause possible                              |
+| --------- | ------------ | ------------------------------------------- |
+| 400       | Bad Request  | Paramètre `userEmail` manquant ou mal formé |
+| 401       | Unauthorized | Token d’accès manquant, expiré ou invalide  |
+| 403       | Forbidden    | Accès refusé (non autorisé)                 |
+| 404       | Not Found    | Aucun résultat trouvé pour cet utilisateur  |
+
+---
+
+# 🔄 Mettre à jour les parts d’une dépense (shares)
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `PATCH http://localhost:8081/api/expenses/{expenseId}/shares`
+* **Méthode** : `PATCH`
+* **Authentification** : Oui (Bearer Token requis)
+
+---
+
+## 📥 Paramètres d’URL
+
+| Paramètre   | Type    | Description                                      |
+| ----------- | ------- | ------------------------------------------------ |
+| `expenseId` | integer | Identifiant unique de la dépense à mettre à jour |
+
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## 📦 Corps de la requête
+
+Un tableau JSON contenant les parts à modifier ou à ajouter à la dépense.
+Chaque part contient l'identifiant utilisateur, son email, le montant et le statut de paiement.
+
+### Exemple :
+
+```json
+[
+  {
+    "userId": "user1",
+    "userEmail": "user2@test.com",
+    "amount": 50,
+    "paid": true
+  },
+  {
+    "userId": "user2",
+    "userEmail": "user2@test.com",
+    "amount": 50,
+    "paid": false
+  }
+]
+```
+
+> 💡 Tu peux **ajouter** un nouvel utilisateur à la dépense via cette requête à condition de **fournir son `userEmail`**.
+
+---
+
+## ✅ Réponse en cas de succès
+
+* **Code** : `200 OK`
+* **Contenu** : Objet JSON représentant la dépense mise à jour
+
+### Exemple :
+
+```json
+{
+  "id": 11,
+  "label": "Dhaw",
+  "totalAmount": 100.0,
+  "dateLimit": "2025-05-30",
+  "paidByUserId": "user1",
+  "paidByUserEmail": "user1@test.com",
+  "colocationId": 1,
+  "shares": [
+    {
+      "userId": "chedly",
+      "userEmail": "chedly@gmail.com",
+      "amount": 400.0,
+      "paid": false,
+      "datePaid": null
+    },
+    {
+      "userId": "user1",
+      "userEmail": "user2@test.com",
+      "amount": 50.0,
+      "paid": true,
+      "datePaid": "2025-05-29"
+    },
+    {
+      "userId": "user2",
+      "userEmail": "user2@test.com",
+      "amount": 50.0,
+      "paid": false,
+      "datePaid": null
+    }
+  ],
+  "datePaid": null
+}
+```
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message      | Cause possible                                   |
+| --------- | ------------ | ------------------------------------------------ |
+| 400       | Bad Request  | Format du corps invalide ou données incohérentes |
+| 401       | Unauthorized | Token d’accès manquant, expiré ou invalide       |
+| 403       | Forbidden    | Accès refusé (non autorisé)                      |
+| 404       | Not Found    | Dépense non trouvée ou utilisateur inexistant    |
+
+---
+
+# 📧 Envoyer un e-mail
+
+---
+
+## 🔗 Endpoint
+
+* **URL** : `POST http://localhost:8081/api/notify/email`
+* **Méthode** : `POST`
+* **Authentification** : Oui (Bearer Token requis)
+
+---
+
+## 📥 Paramètres de requête (Query Params)
+
+| Paramètre | Type   | Obligatoire | Description                   |
+| --------- | ------ | ----------- | ----------------------------- |
+| `to`      | string | ✅ Oui       | Adresse email du destinataire |
+| `subject` | string | ✅ Oui       | Sujet de l'email              |
+| `body`    | string | ✅ Oui       | Contenu de l'email            |
+
+* **exemple** : `http://localhost:8081/api/notify/email?to=chedlygmail.com&subject=Hello&body=This is a test`
+---
+
+## 🔐 Headers
+
+| Clé           | Valeur                  |
+| ------------- | ----------------------- |
+| Authorization | Bearer `<access_token>` |
+
+---
+
+## 📝 Corps de la requête
+
+Aucun corps (`body`) requis. Tous les paramètres sont transmis via l’URL (query params).
+
+---
+
+## ✅ Réponse en cas de succès
+
+* **Code HTTP** : `200 OK`
+* **Contenu** : Message de confirmation
+
+### Exemple :
+
+```text
+Email sent to chedly@gmail.com
+```
+
+---
+
+## ❌ Erreurs possibles
+
+| Code HTTP | Message      | Cause possible                    |
+| --------- | ------------ | --------------------------------- |
+| 400       | Bad Request  | Paramètres manquants ou malformés |
+| 401       | Unauthorized | Token manquant ou invalide        |
+| 500       | Server Error | Erreur lors de l'envoi de l'email |
+
+---
